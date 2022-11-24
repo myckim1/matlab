@@ -1,0 +1,31 @@
+%Getting the file
+fullURL = 'https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&Digits=5&PLow=0&PHigh=100&PInc=0.001&T=140&RefState=DEF&TUnit=K&PUnit=bar&DUnit=kg%2Fm3&HUnit=kJ%2Fmol&WUnit=m%2Fs&VisUnit=uPa*s&STUnit=N%2Fm';
+filename = 'isoterm_140.xlsx';
+urlwrite(fullURL,filename)
+
+%Original Graph
+clc; clear
+Pv_vals = tdfread('Nitrogen.csv','tab');
+isotherm_140 = xlsread('isoterm_140.xlsx');
+
+specific_vol_liq = Pv_vals.Volume_0x28l0x2C_m30x2Fkg0x29;
+specific_vol_vap = Pv_vals.Volume_0x28v0x2C_m30x2Fkg0x29;
+pressure = Pv_vals.Pressure_0x28bar0x29;
+
+critical_p = 33.958; %bar
+critical_specificv = 1/313.300;%m^3kg^-1
+
+semilogx(specific_vol_liq, pressure,'k',LineWidth=1.4);
+hold on
+semilogx(specific_vol_vap,pressure,'k',LineWidth=1.4);
+plot(critical_specificv,critical_p,'.k','MarkerSize',20)
+
+%New Isotherms
+isotherm_140_vol = isotherm_140(:,3).^(-1);
+isotherm_140_pressure = isotherm_140(:,2);
+semilogx(isotherm_140_vol,isotherm_140_pressure,'k',LineWidth=1.4)
+
+xlim([10^-3.2,2])
+ylim([0,40])
+xlabel(['Specific Volume / m^{' num2str(3) '} kg^{' num2str(-1) '}'],'FontSize',16)
+ylabel('Pressure / bar','FontSize',16)
